@@ -1,0 +1,14 @@
+{
+"name": "test003_room_name",
+"country": "미국",
+"city": "산안드레아",
+"price": 70000,
+"rooms": 6,
+"toilets": 3,
+"description": "this room very richful",
+"address": "sanadrea 1034-553",
+"pet_friendly": true,
+"category" : 1, 
+"kind": "shared_room",
+"amenities" : [1,2],
+} 
