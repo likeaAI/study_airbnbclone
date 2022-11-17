@@ -198,18 +198,16 @@ class RoomPhotos(APIView) :
         except Room.DoesNotExist : 
             raise NotFound
     
-    def post(self, request, pk) : 
-        if not request.user.is_authenicated : 
+    def post(self, request, pk) :
+        room = self.get_object(pk) 
+        if not request.user.is_authenticated : 
             raise NotAuthenticated
         if request.user != room.owner :
             raise PermissionDenied
 
         serializer = PhotoSeriailizer(data=request.data)
         if serializer.is_valid() : 
-            photo = serializer.save(room = room)
+            photo = serializer.save(room=room)
             serializer = PhotoSeriailizer(photo)
-            
-            
         else : 
-            return Response(PhotoSeriailizer(photo , ))
-
+            return Response(serializer.errors)
