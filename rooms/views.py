@@ -68,6 +68,32 @@ class AmenityDetail(APIView):
         return Response(status=HTTP_204_NO_CONTENT)
 
 
+class AmenityReviews(APIView):
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        page_size = 3
+        start = (page - 1) * page_size
+        end = start + page_size
+
+        amenity = self.get_object(pk)
+        serializer = AmenitySerializer(amenity.amenities.all()[start:end],
+                                       many=True,
+                                       )
+        return Response(serializer.data)
+
+    def post():
+        pass  
+
 class Rooms(APIView):
 
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -150,6 +176,9 @@ class RoomDetail(APIView):
 
 
 class RoomReviews(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_object(self, pk):
         try:
             return Room.objects.get(pk=pk)
@@ -173,30 +202,17 @@ class RoomReviews(APIView):
         return Response(serializer.data)
 
 
+    def post(self,request,pk) : 
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid() : 
+           review = serializer.save(
+                        user=request.user, room=self.get_object(pk),
+                    )
+           serializer = ReviewSerializer(review)
+           return Response(serializer.data)
 
-class AmenityReviews(APIView) : 
-    def get_object(self, pk):
-        try:
-            return Room.objects.get(pk=pk)
-        except Room.DoesNotExist:
-            raise NotFound
 
 
-    def get(self, request, pk): 
-        try :
-            page = request.query_params.get("page", 1)
-            page = int(page)
-        except ValueError:
-            page = 1
-        page_size = 3
-        start = (page - 1) * page_size
-        end = start + page_size
-
-        amenity = self.get_object(pk)
-        serializer = AmenitySerializer(amenity.amenities.all()[start:end] , 
-                                        many = True, 
-                                                    )
-        return Response(serializer.data)
 
 
 class RoomPhotos(APIView) : 
