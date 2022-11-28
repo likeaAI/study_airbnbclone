@@ -23,7 +23,8 @@ class User(AbstractUser):
         max_length=150,
         editable=False,
     )
-    avatar = models.ImageField(blank=True)
+    #avatar = models.ImageField(blank=True) 장고서버 기능 사용안함 파일저장은 다른서버사용
+    avatar = models.URLField(blank=True)
     name = models.CharField(
         max_length=150,
         default="",
